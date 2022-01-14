@@ -12,7 +12,7 @@
 /** @var CBitrixComponent $component */
 $this->setFrameMode(true);
 ?>
-
+<?///echo "<pre>";var_dump($arParams["LIST_DISPLAY_SPECIALDATE"]);echo "</pre>";?>
 <?if($arParams["USE_RSS"]=="Y"):?>
 	<?
 	if(method_exists($APPLICATION, 'addheadstring'))
@@ -52,6 +52,7 @@ $this->setFrameMode(true);
 ?>
 <br />
 <?endif?>
+
 <?$APPLICATION->IncludeComponent(
 	"bitrix:news.list",
 	"",
@@ -102,6 +103,8 @@ $this->setFrameMode(true);
 		"FILTER_NAME" => $arParams["FILTER_NAME"],
 		"HIDE_LINK_WHEN_NO_DETAIL" => $arParams["HIDE_LINK_WHEN_NO_DETAIL"],
 		"CHECK_DATES" => $arParams["CHECK_DATES"],
+		"LIST_DISPLAY_SPECIALDATE" => $arParams["LIST_DISPLAY_SPECIALDATE"],
+		"CELL-LARGE" => $arParams["CELL-LARGE"]
 	),
 	$component
 );?>
