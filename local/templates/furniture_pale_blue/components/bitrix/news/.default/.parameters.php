@@ -7,6 +7,11 @@ $arTemplateParameters = array(
 		"TYPE" => "CHECKBOX",
 		"DEFAULT" => "N",
 	),
+	"DETAIL_DISPLAY_LINK_CAN_ID" => Array(
+		"NAME" => Loc::getMessage("DETAIL_DISPLAY_LINK_CAN_ID"),
+		"TYPE" => "STRING",
+		"DEFAULT" => "",
+	),
 	
 );
 ?>

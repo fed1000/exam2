@@ -88,6 +88,7 @@ $APPLICATION->SetTitle("Новости");
 		"PAGER_BASE_LINK_ENABLE" => "N",
 		"SHOW_404" => "N",
 		"MESSAGE_404" => "",
+		"DETAIL_DISPLAY_LINK_CAN_ID" => "8",
 		"SEF_URL_TEMPLATES" => array(
 			"news" => "",
 			"section" => "",
