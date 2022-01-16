@@ -1,5 +1,6 @@
 <?
 IncludeModuleLangFile(__FILE__);
+///[ex2-50] Проверка при деактивации товара 
 AddEventHandler("iblock", "OnBeforeIBlockElementUpdate", Array("ElementUpdateProduct", "OnBeforeIBlockElementUpdateHandler"));
 class ElementUpdateProduct
 {
@@ -21,6 +22,29 @@ class ElementUpdateProduct
                }
            }
         }
+    }
+}
+///[ex2-93] Записывать в Журнал событий открытие не существующих страниц сайта
+AddEventHandler("main", "OnEpilog", "error_page");
+function error_page()
+{
+    global $APPLICATION;
+    $page = $APPLICATION->GetCurUri();
+	$page_404 = "/404.php";
+	if(strpos($APPLICATION->GetCurPage(), $page_404) === false && defined("ERROR_404") && ERROR_404 == "Y")
+	{
+        $APPLICATION->RestartBuffer();
+        // подключаем файлы для отображения страницы 404
+        include $_SERVER["DOCUMENT_ROOT"].SITE_TEMPLATE_PATH."/header.php";
+        include $_SERVER["DOCUMENT_ROOT"].$page_404;
+        include $_SERVER["DOCUMENT_ROOT"].SITE_TEMPLATE_PATH."/footer.php";
+        //запись в журнал событий
+        CEventLog::Add(array(
+            "SEVERITY" => "INFO",
+            "AUDIT_TYPE_ID" => "ERROR_404",
+            "MODULE_ID" => "main",
+            "DESCRIPTION" => $page,
+         ));
     }
 }
 //use Bitrix\Main\EventManager;
