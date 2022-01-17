@@ -48,6 +48,7 @@ function error_page()
 }
 //[ex2-51] Изменение данных в письме
 AddEventHandler("main", "OnBeforeEventAdd", array("CMainHandler", "OnBeforeEventAddHandler"));
+AddEventHandler("main", "OnBuildGlobalMenu", array("CMainHandler", "globalMenuContentManager"));
 class CMainHandler
 {
     function OnBeforeEventAddHandler(&$event, &$lid, &$arFields)
@@ -65,7 +66,7 @@ class CMainHandler
                     )
                 );
                 $arFields["AUTHOR"] =  $sTextAuthorAuthorized;
-            } else {var_dump($arFields["AUTHOR"]);
+            } else {
                 $sTextAuthorNoAuthorized = GetMessage('FEEDBACK_USER_NOAUTH', array('#AUTHOR#' => $arFields["AUTHOR"]));
                 $arFields["AUTHOR"] =  $sTextAuthorNoAuthorized;
             }
@@ -75,6 +76,42 @@ class CMainHandler
                 "MODULE_ID" => "main",
                 "DESCRIPTION" => GetMessage('FEEDBACK_USER_EVENT_REPLACEMENT', array('#AUTHOR#' => $arFields["AUTHOR"])),
             ));
+        }
+    }
+    //[ex2-95] Упростить меню в адмистративном разделе для контент-менеджера
+    function globalMenuContentManager(&$aGlobalMenu, &$aModuleMenu){
+        global $USER;
+        $userGroup = CUSER::GetUserGroupList($USER->GetID());
+        $contentGroupID = CGroup::GetList(
+            $by = "c_sort",
+            $order = "asc",
+            array(
+                "STRING_ID" => "content_editor"
+            )
+        )->Fetch()["ID"];
+        //перебираем группы пользователя
+        while($group  = $userGroup -> Fetch()){
+            if($group["GROUP_ID"] == 1){
+                $isAdmin = true;
+            }
+            if($group["GROUP_ID"] == $contentGroupID){
+                $isManager = true;
+            }
+            if(!$isAdmin && $isManager){
+                foreach ($aModuleMenu as $key => $item) {
+                if($item["items_id"] == "menu_iblock_/news"){
+                    $aModuleMenu = [$item];
+                    foreach ($item["items"] as $childItem) {
+                        if($childItem["items_id"] == "menu_iblock_/news/1"){
+                            $aModuleMenu[0]["items"] = [$childItem];
+                            break;
+                        }
+                    }
+                    break;
+                }
+                }
+                $aGlobalMenu = ["global_menu_content" =>$aGlobalMenu["global_menu_content"]];
+            }
         }
     }
 }
