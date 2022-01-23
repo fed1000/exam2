@@ -79,7 +79,8 @@ class CMainHandler
         }
     }
     //[ex2-95] Упростить меню в адмистративном разделе для контент-менеджера
-    function globalMenuContentManager(&$aGlobalMenu, &$aModuleMenu){
+    function globalMenuContentManager(&$aGlobalMenu, &$aModuleMenu)
+    {
         global $USER;
         $userGroup = CUSER::GetUserGroupList($USER->GetID());
         $contentGroupID = CGroup::GetList(
@@ -90,31 +91,66 @@ class CMainHandler
             )
         )->Fetch()["ID"];
         //перебираем группы пользователя
-        while($group  = $userGroup -> Fetch()){
-            if($group["GROUP_ID"] == 1){
+        while ($group  = $userGroup->Fetch()) {
+            if ($group["GROUP_ID"] == 1) {
                 $isAdmin = true;
             }
-            if($group["GROUP_ID"] == $contentGroupID){
+            if ($group["GROUP_ID"] == $contentGroupID) {
                 $isManager = true;
             }
-            if(!$isAdmin && $isManager){
+            if (!$isAdmin && $isManager) {
                 foreach ($aModuleMenu as $key => $item) {
-                if($item["items_id"] == "menu_iblock_/news"){
-                    $aModuleMenu = [$item];
-                    foreach ($item["items"] as $childItem) {
-                        if($childItem["items_id"] == "menu_iblock_/news/1"){
-                            $aModuleMenu[0]["items"] = [$childItem];
-                            break;
+                    if ($item["items_id"] == "menu_iblock_/news") {
+                        $aModuleMenu = [$item];
+                        foreach ($item["items"] as $childItem) {
+                            if ($childItem["items_id"] == "menu_iblock_/news/1") {
+                                $aModuleMenu[0]["items"] = [$childItem];
+                                break;
+                            }
                         }
+                        break;
                     }
-                    break;
                 }
-                }
-                $aGlobalMenu = ["global_menu_content" =>$aGlobalMenu["global_menu_content"]];
+                $aGlobalMenu = ["global_menu_content" => $aGlobalMenu["global_menu_content"]];
             }
         }
     }
 }
+//[ex2-94] Супер инструмент SEO специалиста
+AddEventHandler("main", "OnBeforeProlog", array("CIblockElementProperty", "OnBeforeIBlockUpdateProperty"));
+class CIblockElementProperty
+{
+    function OnBeforeIBlockUpdateProperty()
+    {
+        global $APPLICATION;
+        $curPage = $APPLICATION->GetCurDir();
+
+        if (\Bitrix\Main\Loader::includeModule('iblock')) {
+            $arFilter = array(
+                "IBLOCK_ID" => IBLOCK_META,
+                "NAME" => $curPage
+            );
+            $arSelect = array(
+                "IBLOCK_ID",
+                "ID",
+                "PROPERTY_TITLE",
+                "PROPERTY_DESCRIPTION",
+            );
+            $ob = CIblockElement::Getlist(
+                array(),
+                $arFilter,
+                false,
+                false,
+                $arSelect
+            );
+            if ($arRes = $ob->Fetch()) {
+                $APPLICATION->SetPageProperty('title', $arRes['PROPERTY_TITLE_VALUE']);
+                $APPLICATION->SetPageProperty('description', $arRes['PROPERTY_DESCRIPTION_VALUE']);
+            }
+        }
+    }
+}
+
 //use Bitrix\Main\EventManager;
 //$eventManager = EventManager::getInstance();
 //$eventManager->addEventHandler("iblock", "OnBeforeIBlockElementUpdate", array("CIBlockHandler", "OnBeforeIBlockElementUpdateHandler"));
