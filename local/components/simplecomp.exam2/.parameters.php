@@ -17,6 +17,7 @@ $arComponentParameters = array(
 		"CODE_LINK_PRODUCT_IN_CLASS" => array(
 			"NAME" => GetMessage("SIMPLECOMP_EXAM2_CODE_LINK_PRODUCT_IN_CLASS"),
 			"TYPE" => "STRING",
-		)
+		),
+		"CACHE_TIME"  =>  array("DEFAULT"=>36000000),
 	),
 );

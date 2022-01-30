@@ -63,6 +63,7 @@ if($this->startResultCache(false, array($USER->GetGroups()))){
 	);
 	$arSortElems = array ();
 	$rsElements = CIBlockElement::GetList($arSortElems, $arFilterElemsProducts, false, false, $arSelectElemsProducts);
+	$rsElements->SetUrlTemplates($arParams["TEMPLATE_DETAIL_LINK"]);
 	while($arElementProducts = $rsElements->GetNextElement())
 	{
 		$arField = $arElementProducts->GetFields();

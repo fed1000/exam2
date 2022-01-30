@@ -6,6 +6,13 @@ $aMenuLinks = Array(
 		Array(), 
 		Array(), 
 		"" 
+	),
+	Array(
+		"Разработать простой компонент «Новости по интересам» [ex2-97] ", 
+		"/ex2/simplecomp/razrabotat-prostoy-komponent-novosti-po-interesam-ex2-97-/", 
+		Array(), 
+		Array(), 
+		"" 
 	)
 );
 ?>
