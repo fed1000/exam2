@@ -18,7 +18,8 @@ if(count($arResult["NEWS"]) > 0){?>
                             <?=$arProduct["NAME"];?> -
                             <?=$arProduct["PROPERTY_PRICE_VALUE"];?> -
                             <?=$arProduct["PROPERTY_MATERIAL_VALUE"];?> -
-                            <?=$arProduct["PROPERTY_ARTNUMBER_VALUE"];?>
+                            <?=$arProduct["PROPERTY_ARTNUMBER_VALUE"];?> -
+                            (<?=$arProduct["DETAIL_PAGE_URL"] . ".php";?>)
                         </li>
                     <? } ?>
                 </ul>

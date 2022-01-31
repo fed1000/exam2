@@ -71,7 +71,10 @@ if($this->startResultCache()){
 	}
 	
 	$obProduct = CIBlockElement::GetList(
-		array(),
+		array(
+			"NAME"=>"asc",
+			"SORT"=>"asc",
+		),
 		array(
 			"IBLOCK_ID" => $arParams["PRODUCTS_IBLOCK_ID"],
 			"ACTIVE" => "Y",
@@ -83,6 +86,7 @@ if($this->startResultCache()){
 			"NAME",
 			"IBLOCK_SECTION_ID",
 			"ID",
+			"CODE",
 			"IBLOCK_ID",
 			"PROPERTY_ARTNUMBER",
 			"PROPERTY_MATERIAL",
@@ -91,6 +95,17 @@ if($this->startResultCache()){
 	);
 	$arResult["PRODUCT_CNT"] = 0;
 	while($arProduct = $obProduct->Fetch()){
+		$arProduct["DETAIL_PAGE_URL"] = str_replace(
+			array(
+				"#SECTION_ID#",
+				"#ELEMENT_CODE#",
+			),
+			array(
+				$arProduct["IBLOCK_SECTION_ID"],
+				$arProduct["CODE"],
+			),
+			$arParams["TEMPLATE_DETAIL_URL"]
+		);
 		$arResult["PRODUCT_CNT"]++;
 		foreach ($arSections[$arProduct["IBLOCK_SECTION_ID"]][$arParams["PRODUCTS_IBLOCK_ID_PROPERTY"]] as $newsId) {
 			$arNews[$newsId]["PRODUCTS"][] = $arProduct;
