@@ -23,7 +23,13 @@ if(!isset($arParams["NEWS_IBLOCK_ID"])){
 	$arParams["NEWS_IBLOCK_ID"] = 0;
 }
 
-if($this->startResultCache()){
+$cFilter = false;
+	if(isset($_REQUEST["F"])){
+		$cFilter = true;
+	}
+
+if($this->startResultCache(false, array($cFilter))){
+	
 	$arNews = array();
 	$arNewsID = array();
 
@@ -49,6 +55,8 @@ if($this->startResultCache()){
 	$arSections = array();
 	$arSectionsID = array();
 
+	
+
 	$obSection = CIBlockSection::GetList(
 		array(),
 		array(
@@ -69,17 +77,26 @@ if($this->startResultCache()){
 		$arSectionsID[] = $arSectionCatalog["ID"];
 		$arSections[$arSectionCatalog["ID"]] = $arSectionCatalog;
 	}
-	
+
+	$arFilterElements = array(
+		"IBLOCK_ID" => $arParams["PRODUCTS_IBLOCK_ID"],
+		"ACTIVE" => "Y",
+		"SECTION_ID" => $arSectionsID
+	);
+	if($cFilter){
+		$arFilterElements[] = array(
+			array("<=PROPERTY_PRICE" => 1700, "PROPERTY_MATERIAL" => "Дерево, ткань"),
+			array("<PROPERTY_PRICE" => 1500, "PROPERTY_MATERIAL" => "Металл, пластик"),
+			"LOGIC" => "OR"
+		);
+		$this->abortResultCache();
+	}
 	$obProduct = CIBlockElement::GetList(
 		array(
 			"NAME"=>"asc",
 			"SORT"=>"asc",
 		),
-		array(
-			"IBLOCK_ID" => $arParams["PRODUCTS_IBLOCK_ID"],
-			"ACTIVE" => "Y",
-			"SECTION_ID" => $arSectionsID
-		),
+		$arFilterElements,
 		false,
 		false,
 		array(
