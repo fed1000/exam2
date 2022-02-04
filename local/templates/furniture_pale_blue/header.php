@@ -158,6 +158,9 @@ IncludeTemplateLangFile(__FILE__);
 						?>
 					</div>
 				</div>
+				<?
+				$APPLICATION->ShowViewContent("prices");
+				?>
 
 				<div class="information-block">
 					<div class="top"></div>
