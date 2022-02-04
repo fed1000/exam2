@@ -1,35 +1,52 @@
 <?
-if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true) die();
+if (!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED !== true) die();
 
 use Bitrix\Main\Loader,
 	Bitrix\Iblock;
 
-if(!Loader::includeModule("iblock"))
-{
+if (!Loader::includeModule("iblock")) {
 	ShowError(GetMessage("SIMPLECOMP_EXAM2_IBLOCK_MODULE_NONE"));
 	return;
 }
 
 
-if(!isset($arParams["CACHE_TIME"])){
+if (!isset($arParams["CACHE_TIME"])) {
 	$arParams["CACHE_TIME"] = 36000000;
 }
 
-if(!isset($arParams["PRODUCTS_IBLOCK_ID"])){
+if (!isset($arParams["PRODUCTS_IBLOCK_ID"])) {
 	$arParams["PRODUCTS_IBLOCK_ID"] = 0;
 }
 
-if(!isset($arParams["NEWS_IBLOCK_ID"])){
+if (!isset($arParams["NEWS_IBLOCK_ID"])) {
 	$arParams["NEWS_IBLOCK_ID"] = 0;
 }
 
 $cFilter = false;
-	if(isset($_REQUEST["F"])){
-		$cFilter = true;
-	}
+if (isset($_REQUEST["F"])) {
+	$cFilter = true;
+}
 
-if($this->startResultCache(false, array($cFilter))){
-	
+//[ex2-100] Добавить пункт «ИБ в админке» в выпадающем меню компонента.
+//добавляем кнопку в выпадающем меню
+
+global $USER;
+if($USER->isAuthorized()){
+	$arButtons = CIBlock::GetPanelButtons($arParams["PRODUCTS_IBLOCK_ID"]);
+	$this->AddIncludeAreaIcons(
+		array(
+			array(
+				"ID" => "linklb",
+				"TITLE" => GetMessage('IB_BUTTON_NAME'),
+				"URL" => $arButtons["submenu"]["element_list"]["ACTION_URL"],
+				"IN_PARAMS_MENU" => true, //показать в контекстном меню
+			)
+		)
+	);
+}
+
+if ($this->startResultCache(false, array($cFilter))) {
+
 	$arNews = array();
 	$arNewsID = array();
 
@@ -47,7 +64,7 @@ if($this->startResultCache(false, array($cFilter))){
 			"ID"
 		)
 	);
-	while($newsElements = $obNews->Fetch()){
+	while ($newsElements = $obNews->Fetch()) {
 		$arNewsID[] = $newsElements["ID"];
 		$arNews[$newsElements["ID"]] = $newsElements;
 	}
@@ -55,7 +72,7 @@ if($this->startResultCache(false, array($cFilter))){
 	$arSections = array();
 	$arSectionsID = array();
 
-	
+
 
 	$obSection = CIBlockSection::GetList(
 		array(),
@@ -83,7 +100,7 @@ if($this->startResultCache(false, array($cFilter))){
 		"ACTIVE" => "Y",
 		"SECTION_ID" => $arSectionsID
 	);
-	if($cFilter){
+	if ($cFilter) {
 		$arFilterElements[] = array(
 			array("<=PROPERTY_PRICE" => 1700, "PROPERTY_MATERIAL" => "Дерево, ткань"),
 			array("<PROPERTY_PRICE" => 1500, "PROPERTY_MATERIAL" => "Металл, пластик"),
@@ -93,8 +110,8 @@ if($this->startResultCache(false, array($cFilter))){
 	}
 	$obProduct = CIBlockElement::GetList(
 		array(
-			"NAME"=>"asc",
-			"SORT"=>"asc",
+			"NAME" => "asc",
+			"SORT" => "asc",
 		),
 		$arFilterElements,
 		false,
@@ -111,7 +128,7 @@ if($this->startResultCache(false, array($cFilter))){
 		),
 	);
 	$arResult["PRODUCT_CNT"] = 0;
-	while($arProduct = $obProduct->Fetch()){
+	while ($arProduct = $obProduct->Fetch()) {
 		//эрмитаж
 		$arButtons = CIBlock::GetPanelButtons(
 			$arParams["PRODUCTS_IBLOCK_ID"],
@@ -143,7 +160,7 @@ if($this->startResultCache(false, array($cFilter))){
 	}
 
 	//распределяем разделы по новостям и подсчитываем количество
-	
+
 	foreach ($arSections as $arSection) {
 
 		foreach ($arSection[$arParams["PRODUCTS_IBLOCK_ID_PROPERTY"]] as $newId) {
@@ -155,8 +172,6 @@ if($this->startResultCache(false, array($cFilter))){
 	$this->SetResultCacheKeys(array("PRODUCT_CNT"));
 	$this->includeComponentTemplate();
 	$APPLICATION->SetTitle(GetMessage("COUNT") . $arResult["PRODUCT_CNT"]);
-}else{
+} else {
 	$this->abortResultCache();
 }
-
-
