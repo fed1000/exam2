@@ -45,7 +45,10 @@ if($USER->isAuthorized()){
 	);
 }
 
-if ($this->startResultCache(false, array($cFilter))) {
+///[ex2-60] Добавить постраничную навигацию в созданный простой компонент
+$arNavigation = CDBResult::GetNavParams(false);
+
+if ($this->startResultCache(false, array($cFilter, $arNavigation))) {
 
 	$arNews = array();
 	$arNewsID = array();
@@ -57,13 +60,17 @@ if ($this->startResultCache(false, array($cFilter))) {
 			"ACTIVE" => "Y"
 		),
 		false,
-		false,
+		array(
+			"nPageSize" => $arParams["ELEMENT_PER_PAGE"],
+			"bShowAll" => true,
+		),
 		array(
 			"NAME",
 			"ACTIVE_FROM",
 			"ID"
 		)
 	);
+	$arResult["NAV_STRING"] = $obNews->GetPageNavString(GetMessage("PAGE_TITLE"));
 	while ($newsElements = $obNews->Fetch()) {
 		$arNewsID[] = $newsElements["ID"];
 		$arNews[$newsElements["ID"]] = $newsElements;
@@ -155,7 +162,9 @@ if ($this->startResultCache(false, array($cFilter))) {
 		);
 		$arResult["PRODUCT_CNT"]++;
 		foreach ($arSections[$arProduct["IBLOCK_SECTION_ID"]][$arParams["PRODUCTS_IBLOCK_ID_PROPERTY"]] as $newsId) {
-			$arNews[$newsId]["PRODUCTS"][] = $arProduct;
+			if(isset($arNews[$newsId])){
+				$arNews[$newsId]["PRODUCTS"][] = $arProduct;
+			}
 		}
 	}
 
@@ -164,7 +173,9 @@ if ($this->startResultCache(false, array($cFilter))) {
 	foreach ($arSections as $arSection) {
 
 		foreach ($arSection[$arParams["PRODUCTS_IBLOCK_ID_PROPERTY"]] as $newId) {
-			$arNews[$newId]["SECTIONS"][] = $arSection["NAME"];
+			if(isset($arNews[$newId])){
+				$arNews[$newId]["SECTIONS"][] = $arSection["NAME"];
+			}
 		}
 	}
 

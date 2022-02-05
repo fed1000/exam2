@@ -37,5 +37,13 @@ if(count($arResult["NEWS"]) > 0){?>
             <?}?>
         <? } ?>
     </ul>
+    <br>
+    ---
+    <p>
+        <b>
+            <?=GetMessage("NAVY");?>
+        </b>
+    </p>
+    <?=$arResult["NAV_STRING"];?>
 <?}
 ?>
