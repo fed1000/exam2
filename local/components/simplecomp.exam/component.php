@@ -47,9 +47,10 @@ if($USER->isAuthorized()){
 
 ///[ex2-60] Добавить постраничную навигацию в созданный простой компонент
 $arNavigation = CDBResult::GetNavParams(false);
-
-if ($this->startResultCache(false, array($cFilter, $arNavigation))) {
-
+///[ex2-107] Автоматический сброс кеша в компоненте при изменении элемента информационного блока «Услуги».
+global $CACHE_MANAGER;
+if ($this->startResultCache(false, array($cFilter, $arNavigation), "/servicesIblock")) {
+	$CACHE_MANAGER->RegisterTag("iblock_id_3");
 	$arNews = array();
 	$arNewsID = array();
 
