@@ -12,6 +12,11 @@ $arTemplateParameters = array(
 		"TYPE" => "STRING",
 		"DEFAULT" => "",
 	),
+	"REPORT_AJAX" => Array(
+		"NAME" => Loc::getMessage("REPORT_AJAX"),
+		"TYPE" => "CHECKBOX",
+		"DEFAULT" => "",
+	),
 	
 );
 ?>

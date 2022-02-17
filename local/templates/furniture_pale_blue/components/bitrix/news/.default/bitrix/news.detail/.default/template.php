@@ -1,5 +1,39 @@
 <?if(!defined("B_PROLOG_INCLUDED") || B_PROLOG_INCLUDED!==true)die();?>
 <div class="news-detail">
+<?
+		if ($arParams["REPORT_AJAX"] == "Y") { ?>
+			<script>
+				(function(BX) {
+					BX.ready(function(){
+						var ajaxReportBtn = document.getElementById("ajax-report");
+						ajaxReportBtn.onclick = function() {
+							// Функция загружает json-объект из заданного url и передает его обработчику callback
+							BX.ajax.loadJSON(
+								'<?=$APPLICATION->GetCurPage();?>',
+								{"TYPE":"REPORT_AJAX", "ID": <?=$arResult["ID"]?>},
+								function(data) {
+									var textElem = document.getElementById("ajax-report-text");
+									textElem.innerText = "Ваше мнение учтено, №" + data["ID"];
+								},
+								function(data) {
+									var textElem = document.getElementById("ajax-report-text");
+									textElem.innerText = "Ошибка!";
+								}
+							);
+						};
+					})
+				})(BX);
+			</script>
+			<span style="font-size: 13px">
+				<a id="ajax-report" href="#">Пожаловаться ! </a>
+				<span id="ajax-report-text"></span>
+			</span>
+		<? }else { ?>
+			<span style="font-size: 13px">
+				<a href="<?=$APPLICATION->GetCurPage();?>?TYPE=REPORT_GET&ID=<?=$arResult["ID"]?>">Пожаловаться ! </a>
+				<span id="ajax-report-text"></span>
+			</span>
+		<? } ?>
 	<?if($arParams["DISPLAY_PICTURE"]!="N" && is_array($arResult["DETAIL_PICTURE"])):?>
 		<img class="detail_picture" src="<?=$arResult["DETAIL_PICTURE"]["SRC"]?>" width="<?=$arResult["DETAIL_PICTURE"]["WIDTH"]?>" height="<?=$arResult["DETAIL_PICTURE"]["HEIGHT"]?>" alt="<?=$arResult["NAME"]?>"  title="<?=$arResult["NAME"]?>" />
 	<?endif?>
@@ -31,6 +65,7 @@
 	<?foreach($arResult["DISPLAY_PROPERTIES"] as $pid=>$arProperty):?>
 
 		<?=$arProperty["NAME"]?>:&nbsp;
+		
 		<?if(is_array($arProperty["DISPLAY_VALUE"])):?>
 			<?=implode("&nbsp;/&nbsp;", $arProperty["DISPLAY_VALUE"]);?>
 		<?else:?>
