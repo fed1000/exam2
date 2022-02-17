@@ -7,9 +7,10 @@ IncludeTemplateLangFile(__FILE__);
 
 <head>
 	<meta http-equiv="X-UA-Compatible" content="IE=edge" />
-	<? $APPLICATION->ShowHead(); ?>
-	<link href="<?= SITE_TEMPLATE_PATH ?>/common.css" type="text/css" rel="stylesheet" />
-	<link href="<?= SITE_TEMPLATE_PATH ?>/colors.css" type="text/css" rel="stylesheet" />
+	<? $APPLICATION->ShowHead(); 
+	$APPLICATION->SetAdditionalCSS(SITE_TEMPLATE_PATH . "/common.css");
+	$APPLICATION->SetAdditionalCSS(SITE_TEMPLATE_PATH . "/colors.css");
+	?>
 
 	<!--[if lte IE 6]>
 	<style type="text/css">
@@ -130,6 +131,8 @@ IncludeTemplateLangFile(__FILE__);
 						"ACTIVE_COMPONENT" => "Y"
 					)
 				); ?>
+
+				
 				<div class="content-block">
 					<div class="content-block-inner">
 						<h3><?= GetMessage('CFT_NEWS') ?></h3>
@@ -141,6 +144,22 @@ IncludeTemplateLangFile(__FILE__);
 						);
 						?>
 					</div>
+				</div>
+
+				<div class="content-block-inner">
+					<h3><?=GetMessage('CFT_LANG_CANGE')?></h3>
+					<?
+					$APPLICATION->IncludeComponent("bitrix:main.site.selector", "dropdown1", Array(
+						"CACHE_TIME" => "3600",	// Время кеширования (сек.)
+							"CACHE_TYPE" => "A",	// Тип кеширования
+							"SITE_LIST" => array(	// Список сайтов
+								0 => "*all*",
+							),
+							"COMPONENT_TEMPLATE" => "dropdown"
+						),
+						false
+					);
+					?>
 				</div>
 
 				<div class="content-block">
@@ -158,6 +177,7 @@ IncludeTemplateLangFile(__FILE__);
 						?>
 					</div>
 				</div>
+				
 				<?
 				$APPLICATION->ShowViewContent("prices");
 				?>
